@@ -286,9 +286,87 @@ footer.site .reset{background:none;border:none;color:var(--green);text-decoratio
 .fin-wrap{overflow-x:auto}
 .fin-table{min-width:720px}
 @media(max-width:560px){.rubric{grid-template-columns:1fr}}
+
+/* ---------- Auth wall ---------- */
+.auth-wall{
+  position:fixed;inset:0;z-index:999;
+  background:#f4f1eb;
+  background-image:radial-gradient(circle at 30% 20%,rgba(143,179,57,.08),transparent 50%),radial-gradient(circle at 80% 70%,rgba(232,168,56,.07),transparent 45%);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+body:not(.locked) .auth-wall{display:none}
+body.locked header.site,body.locked main,body.locked footer.site,body.locked .modal-bg{visibility:hidden;pointer-events:none;position:fixed;left:-9999px}
+.auth-box{
+  background:#fffdf8;border:1px solid #e4ddd0;border-radius:22px;padding:40px 36px 34px;
+  box-shadow:0 2px 6px rgba(60,50,30,.06),0 24px 48px -20px rgba(60,50,30,.22);
+  max-width:370px;width:100%;text-align:center;animation:pop .3s cubic-bezier(.22,1,.36,1);
+}
+.auth-box .auth-logo{
+  width:56px;height:56px;border-radius:16px;margin:0 auto 18px;
+  background:linear-gradient(150deg,#8fb339,#e8a838);display:grid;place-items:center;
+  font-family:var(--display);font-weight:700;font-size:28px;color:#fff;
+  box-shadow:0 8px 20px -8px rgba(60,50,30,.45);
+}
+.auth-box h2{font-family:var(--display);font-weight:600;font-size:22px;color:#2c4a36;letter-spacing:-.4px;margin:0 0 4px}
+.auth-box .auth-sub{font-size:13.5px;color:#5e574c;margin:0 0 22px}
+.auth-input{
+  width:100%;font-family:var(--body);font-size:15px;color:#2a2620;background:#fbf8f1;
+  border:1.5px solid #d6cdba;border-radius:12px;padding:13px 16px;text-align:center;
+  letter-spacing:.5px;transition:border-color .15s,box-shadow .15s;
+}
+.auth-input:focus{outline:none;border-color:#4a7c59;box-shadow:0 0 0 3px rgba(74,124,89,.14)}
+.auth-input.shake{animation:shake .4s ease}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.auth-btn{
+  width:100%;margin-top:14px;font-family:var(--body);font-weight:600;font-size:15px;
+  background:#4a7c59;color:#fff;border:none;border-radius:12px;padding:13px;cursor:pointer;
+  box-shadow:0 1px 2px rgba(60,50,30,.04),0 8px 24px -12px rgba(60,50,30,.18);
+  transition:background .15s,transform .1s;
+}
+.auth-btn:hover{background:#3a5f45}
+.auth-btn:active{transform:translateY(1px)}
+.auth-err{font-size:12.5px;color:#c0563f;margin-top:12px;min-height:18px}
 </style>
 </head>
-<body>
+<body class="locked">
+
+<!-- ============================================================
+     CASUAL PASSWORD GATE  (not real security — the page source,
+     including this password, is readable by anyone who looks).
+     To change the password, edit the value on the next line.
+     ============================================================ -->
+<div class="auth-wall" id="authWall">
+  <div class="auth-box">
+    <div class="auth-logo">N</div>
+    <h2>Nourishing the North Shore</h2>
+    <p class="auth-sub">FY26 KPI Dashboard</p>
+    <input class="auth-input" id="authInput" type="password" placeholder="Enter the password" autofocus>
+    <button class="auth-btn" id="authBtn">Continue</button>
+    <div class="auth-err" id="authErr"></div>
+  </div>
+</div>
+<script>
+  // ---- Change this to your password ----
+  var __NNS_PW = "northshore";
+  // --------------------------------------
+  function __tryAuth() {
+    var v = document.getElementById('authInput').value;
+    if (v === __NNS_PW) {
+      document.body.classList.remove('locked');
+      if (typeof animateBars === 'function') setTimeout(animateBars, 120);
+    } else {
+      var inp = document.getElementById('authInput');
+      inp.classList.remove('shake');
+      void inp.offsetWidth;
+      inp.classList.add('shake');
+      document.getElementById('authErr').textContent = v ? 'Incorrect password. Try again.' : '';
+      inp.value = '';
+      inp.focus();
+    }
+  }
+  document.getElementById('authBtn').onclick = __tryAuth;
+  document.getElementById('authInput').onkeydown = function(e) { if (e.key === 'Enter') __tryAuth(); };
+</script>
 
 <header class="site">
   <div class="brand-row">

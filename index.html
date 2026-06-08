@@ -150,13 +150,8 @@ main{padding:clamp(20px,3vw,38px) clamp(16px,4vw,44px) 70px;max-width:1240px;mar
 .bar-wrap{margin-top:16px}
 .bar-meta{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-faint);margin-bottom:5px;font-weight:500}
 .bar-meta b{color:var(--ink-soft);font-weight:700}
-.bar-track{height:9px;background:var(--line);border-radius:999px;overflow:hidden;position:relative}
-.bar-fill{height:100%;border-radius:999px;width:0;transition:width 1s cubic-bezier(.22,1,.36,1)}
-.s-good .bar-fill{background:#8fb339}
-.s-warn .bar-fill{background:#e8a838}
-.s-bad .bar-fill{background:#c0563f}
-.s-idle .bar-fill{background:#9a9387}
-.target-line{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--green-900);opacity:.55}
+.bar-track{height:9px;border-radius:999px;position:relative}
+
 
 .kpi-note{
   margin-top:14px;font-size:12.5px;color:var(--ink-soft);background:var(--bg-card-2);
@@ -374,7 +369,7 @@ body.locked header.site,body.locked main,body.locked footer.site,body.locked .mo
     <div class="logo-mark"><span>N</span></div>
     <div class="brand-text">
       <h1>Nourishing the North Shore</h1>
-      <div class="sub">FY26 Strategic KPI Dashboard &middot; Connecting local farms to community tables</div>
+      <div class="sub">FY26 Strategic KPI Dashboard &middot; Fresh, local food for all</div>
     </div>
     <div class="header-meta">
       <span class="fy-pill">Q1 FY26 &middot; Jan–Mar 2026</span>
@@ -467,8 +462,8 @@ const KPIS = {
   zone:[
     {id:'Z1',name:'Pounds of fresh produce delivered (VEGOUT)',baseline:70000,blabel:'70,000 lbs FY25',current:14821,clabel:'14,821 lbs',target:90000,tlabel:'90,000 lbs',unit:'lbs',owner:'Giuliana',freq:'Quarterly',
      status:'warn',pct:16,annual:true,note:'16% of the annual 90,000 lb goal delivered in Q1 — distribution ramps up through the growing season.'},
-    {id:'Z2',name:'New VEGOUT markets / sites in Zone 1',baseline:0,blabel:'0 in FY25',current:3,clabel:'3 new sites',target:4,tlabel:'4',unit:'',owner:'Giuliana',freq:'Quarterly',
-     status:'good',pct:75,note:'Strong start — 3 of 4 new sites already established in Q1.'},
+    {id:'Z2',name:'New VEGOUT markets / sites in Zone 1',baseline:0,blabel:'0 in FY25',current:3,clabel:'3 new sites',target:3,tlabel:'3',unit:'',owner:'Giuliana',freq:'Quarterly',
+     status:'good',pct:100,note:'Target met — all 3 new sites established in Q1.'},
     {id:'Z3',name:'New households offered subsidized Farm SHARE CSA',baseline:0,blabel:'0 in FY25',current:0,clabel:'0 households',target:20,tlabel:'20',unit:'',owner:'Giuliana',freq:'Quarterly',
      status:'warn',pct:0,note:'Outreach begins as the Farm SHARE season opens later in the year.'},
     {id:'Z4',name:'Individuals served through Food Access Programs',baseline:4000,blabel:'4,000 in FY25',target:5000,tlabel:'5,000',unit:'',owner:'Giuliana',freq:'Annually',status:'idle',annualHold:true,
@@ -502,12 +497,12 @@ const KPIS = {
      status:'good',atLeast:true,note:'Above the 50% floor and holding near the FY25 rate — healthy grant pipeline.'},
   ],
   brand:[
-    {id:'B1',name:'Website visits per month',baseline:626,blabel:'626 FY25',current:658,clabel:'658 visits',target:700,tlabel:'700',unit:'',owner:'Tany',freq:'Quarterly',
-     status:'warn',pct:94,sample:true,note:'Sample data — analytics tracking is being set up. Placeholder shown so the card renders.'},
-    {id:'B2',name:'Social media followers',baseline:3690,blabel:'3,690 FY25',current:3812,clabel:'3,812',target:4000,tlabel:'4,000',unit:'',owner:'Tany',freq:'Quarterly',
-     status:'warn',pct:95,sample:true,note:'Sample data — pending platform reporting. Placeholder shown so the card renders.'},
-    {id:'B3',name:'Email open rate',baseline:22.54,blabel:'22.54% FY25',current:23.1,clabel:'23.1%',target:24,tlabel:'24%',unit:'%',owner:'Rosemary',freq:'Quarterly',
-     status:'warn',pct:96,sample:true,note:'Sample data. Click-through goal is 3% (FY25: 2.54%). Awaiting Q1 email report.'},
+    {id:'B1',name:'Website visits per quarter',baseline:1885,blabel:'1,885 visits Q1 FY25',current:2161,clabel:'2,161 visits',target:2100,tlabel:'2,100 (700/mo)',unit:'',owner:'Tany',freq:'Quarterly',
+     status:'good',pct:103,sample:false,note:'Q1 FY26: 2,161 visits (Q1 FY25 baseline: 1,885). Target is 700 visits/month = ~2,100/quarter.'},
+    {id:'B2',name:'Social media followers',baseline:3690,blabel:'3,690 FY25',current:3893,clabel:'3,893',target:4000,tlabel:'4,000',unit:'',owner:'Tany',freq:'Quarterly',
+     status:'good',pct:97,sample:false,note:'Q1 FY26: 3,893 followers. Up 203 from FY25 baseline of 3,690. On pace toward 4,000 target.'},
+    {id:'B3',name:'Email open rate',baseline:22.54,blabel:'22.54% open / 2.54% CTR FY25',current:22.94,clabel:'22.94% open / 3.9% CTR',target:24,tlabel:'24% open / 3% CTR',unit:'%',owner:'Rosemary',freq:'Quarterly',
+     status:'good',pct:96,sample:false,note:'Q1 FY26: 22.94% open rate (target 24%) and 3.9% CTR — click-through already exceeds the 3% target. Open rate continues to trend upward from 22.54% baseline.'},
   ],
 };
 
@@ -637,9 +632,14 @@ function cardHTML(k){
 }
 function barHTML(pct,targetPct,status,leftTxt,rightTxt){
   const w=Math.max(0,Math.min(100,pct));
+  const colors={good:'#8fb339',warn:'#e8a838',bad:'#c0563f',idle:'#9a9387'};
+  const color=colors[status]||'#9a9387';
+  const track=w===0
+    ? 'background:#e4ddd0;'
+    : 'background:linear-gradient(to right,'+color+' '+w+'%,#e4ddd0 '+w+'%);';
   return '<div class="bar-wrap"><div class="bar-meta"><b>'+(leftTxt||(pct+'%'))+'</b><span>'+(rightTxt||'Target')+'</span></div>'+
-    '<div class="bar-track"><span class="bar-fill" data-w="'+w+'" style="width:'+w+'%"></span>'+
-    (targetPct?'<span class="target-line" style="left:'+Math.min(100,targetPct)+'%"></span>':'')+
+    '<div class="bar-track" style="'+track+'">'+
+    (targetPct?'<div style="position:absolute;top:-2px;bottom:-2px;left:'+Math.min(100,targetPct)+'%;width:2px;background:#4a7c59;opacity:.6;border-radius:2px"></div>':'')+
     '</div></div>';
 }
 
@@ -651,7 +651,7 @@ const ovScore = [
   {area:'Zone 1 Expansion',id:'zone',color:'#4a7c59',val:'14,821',u:'lbs',label:'Produce delivered (Q1)',tgt:'Target: 90,000 lbs'},
   {area:'Program Evaluation',id:'eval',color:'#e8a838',val:'$2.84',u:'/lb',label:'Cost per pound (VEGOUT)',tgt:'Target: ≤ $2.80'},
   {area:'Fundraising',id:'fund',color:'#4a7c59',val:'$146,372',u:'',label:'Raised in Q1',tgt:'Target: $660,105'},
-  {area:'Branding',id:'brand',color:'#cf8f1f',val:'3,812',u:'',label:'Social followers (sample)',tgt:'Target: 4,000'},
+  {area:'Branding',id:'brand',color:'#cf8f1f',val:'3,893',u:'',label:'Social followers',tgt:'Target: 4,000'},
   {area:'Financial',id:'fin',color:'#8fb339',val:'$56,524',u:'',label:'Net operating income (Q1)',tgt:'vs. -$23,688 Q1 FY25'},
 ];
 const ovStatusColor=s=>({good:'#8fb339',warn:'#e8a838',bad:'#c0563f',idle:'#9a9387'}[s]);
@@ -664,7 +664,7 @@ let ovHTML='<div class="panel active" id="p-overview">'+
   '<div class="hero"><h3>In Q1 FY26 we delivered <em>14,821 lbs</em> of fresh produce, raised <em>$146,372</em>, and returned a <em>$56,524</em> net operating surplus — a strong, mission-forward start to the year.</h3>'+
     '<div class="hero-stats">'+
       '<div class="hero-stat"><div class="n">22%</div><div class="l">of annual fundraising goal, raised in Q1</div></div>'+
-      '<div class="hero-stat"><div class="n">3 / 4</div><div class="l">new Zone 1 sites already opened</div></div>'+
+      '<div class="hero-stat"><div class="n">3 / 3</div><div class="l">new Zone 1 sites opened — target met!</div></div>'+
       '<div class="hero-stat"><div class="n">56%</div><div class="l">donor retention, up from 37%</div></div>'+
       '<div class="hero-stat"><div class="n">+$80k</div><div class="l">net income vs. Q1 last year</div></div>'+
     '</div></div>'+
@@ -735,7 +735,7 @@ const RUBRIC=[
   {k:'bad',c:'#c0563f',name:'Off track',
    d:'Well behind pace and likely to miss without intervention. Quarterly goals <b>under 45%</b> of target; full-year totals <b>under 12%</b> in Q1; or more than ~10% past a threshold/ceiling.'},
   {k:'idle',c:'#9a9387',name:'In progress / not tracking',
-   d:'No comparable Q1 result yet — <b>annual-only</b> metrics reported at year-end, <b>pre-season</b> metrics, targets still <b>to be defined</b>, or <b>sample/placeholder</b> figures while tracking is set up.'},
+   d:'No comparable Q1 result yet — <b>annual-only</b> metrics reported at year-end, <b>pre-season</b> metrics, or targets still <b>to be defined</b>.'},
 ];
 function q1Display(k){
   if(k.type==='breakdown') return k.breakdown.map(b=>b.v).join(' / ');
@@ -908,10 +908,6 @@ function drawFinCharts(){
 
 /* ---------- bar animations ---------- */
 function animateBars(){
-  document.querySelectorAll('.panel.active .bar-fill').forEach(b=>{
-    b.style.width='0';
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{b.style.width=(b.dataset.w||0)+'%';}));
-  });
   document.querySelectorAll('.panel.active .mb-fill').forEach(b=>{
     const w=b.style.width; b.style.transition='none'; b.style.width='0';
     requestAnimationFrame(()=>requestAnimationFrame(()=>{b.style.transition='width 1s cubic-bezier(.22,1,.36,1)';b.style.width=w;}));

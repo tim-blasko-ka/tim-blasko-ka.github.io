@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -150,8 +149,13 @@ main{padding:clamp(20px,3vw,38px) clamp(16px,4vw,44px) 70px;max-width:1240px;mar
 .bar-wrap{margin-top:16px}
 .bar-meta{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-faint);margin-bottom:5px;font-weight:500}
 .bar-meta b{color:var(--ink-soft);font-weight:700}
-.bar-track{height:9px;border-radius:999px;position:relative}
-
+.bar-track{height:9px;background:var(--line);border-radius:999px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:999px;width:0;transition:width 1s cubic-bezier(.22,1,.36,1)}
+.s-good .bar-fill{background:#8fb339}
+.s-warn .bar-fill{background:#e8a838}
+.s-bad .bar-fill{background:#c0563f}
+.s-idle .bar-fill{background:#9a9387}
+.target-line{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--green-900);opacity:.55}
 
 .kpi-note{
   margin-top:14px;font-size:12.5px;color:var(--ink-soft);background:var(--bg-card-2);
@@ -281,7 +285,28 @@ footer.site .reset{background:none;border:none;color:var(--green);text-decoratio
 .fin-table .ratio td{font-weight:700;color:var(--green-900)}
 .fin-wrap{overflow-x:auto}
 .fin-table{min-width:720px}
-@media(max-width:560px){.rubric{grid-template-columns:1fr}}
+/* ---------- Town distribution tab ---------- */
+.town-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.town-stat{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);text-align:center}
+.town-stat .ts-val{font-family:var(--display);font-weight:600;font-size:28px;color:var(--green-900);letter-spacing:-.6px}
+.town-stat .ts-label{font-size:12px;color:var(--ink-soft);margin-top:4px}
+.town-table{width:100%;border-collapse:collapse;font-size:13px;min-width:680px}
+.town-table th{position:sticky;top:0;text-align:left;background:var(--green-900);color:#f4f1eb;font-weight:600;font-size:11.5px;letter-spacing:.4px;padding:10px 12px;white-space:nowrap}
+.town-table th.num{text-align:right}
+.town-table td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink-soft);vertical-align:top}
+.town-table td.num{text-align:right;font-variant-numeric:tabular-nums}
+.town-table tr:hover td{background:var(--bg-card-2)}
+.town-table .town-name{font-weight:600;color:var(--ink)}
+.town-table .zone-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:6px;background:rgba(74,124,89,.12);color:var(--green)}
+.town-table .z2-badge{background:rgba(232,168,56,.14);color:var(--amber-deep)}
+.town-table .partners{font-size:11.5px;color:var(--ink-faint);max-width:260px}
+.town-table .new-tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:1px 6px;border-radius:5px;background:rgba(143,179,57,.16);color:#5a7320;margin-left:4px}
+.town-table tr.tot td{font-weight:700;color:var(--green-900);border-top:1.5px solid var(--line-strong)}
+.growth-chip{font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:999px}
+.growth-up{background:rgba(143,179,57,.14);color:#5a7320}
+.growth-down{background:rgba(192,86,63,.12);color:var(--red)}
+.growth-new{background:rgba(74,124,89,.12);color:var(--green)}
+@media(max-width:560px){.rubric{grid-template-columns:1fr}.town-summary{grid-template-columns:repeat(2,1fr)}}
 
 /* ---------- Auth wall ---------- */
 .auth-wall{
@@ -369,12 +394,12 @@ body.locked header.site,body.locked main,body.locked footer.site,body.locked .mo
     <div class="logo-mark"><span>N</span></div>
     <div class="brand-text">
       <h1>Nourishing the North Shore</h1>
-      <div class="sub">FY26 Strategic KPI Dashboard &middot; Fresh, local food for all</div>
+      <div class="sub">FY26 Strategic KPI Dashboard &middot; Connecting local farms to community tables</div>
     </div>
     <div class="header-meta">
-      <span class="fy-pill">Q1 FY26 &middot; Jan–Mar 2026</span>
+      <span class="fy-pill">Q1–Q2 FY26 &middot; Jan–Jun 2026</span>
       <span class="updated">Last updated:
-        <input type="text" id="lastUpdated" value="June 4, 2026">
+        <input type="text" id="lastUpdated" value="August 13, 2026">
       </span>
     </div>
   </div>
@@ -384,7 +409,7 @@ body.locked header.site,body.locked main,body.locked footer.site,body.locked .mo
 <main id="main"></main>
 
 <footer class="site">
-  Nourishing the North Shore &middot; FY26 KPI Dashboard (first draft) &middot; Data: Q1 FY26 actuals vs. FY25 baseline &amp; FY26 targets<br>
+  Nourishing the North Shore &middot; FY26 KPI Dashboard &middot; Data through Q2 FY26 (Jan–Jun 2026)<br>
   <button class="reset" id="resetBtn">Reset all manually-entered data</button>
 </footer>
 
@@ -396,7 +421,7 @@ body.locked header.site,body.locked main,body.locked footer.site,body.locked .mo
       <p id="mDesc">Enter the latest value. Status and progress recalculate automatically.</p>
     </div>
     <div class="modal-body">
-      <label>Current value (Q1 FY26)</label>
+      <label>Current value</label>
       <input type="text" id="mValue" placeholder="e.g. 42">
       <div class="hint" id="mHint"></div>
       <label>Note / context (optional)</label>
@@ -426,7 +451,7 @@ body.locked header.site,body.locked main,body.locked footer.site,body.locked .mo
 </script>
 <script>
 /* ============================================================
-   NNS FY26 KPI Dashboard — data + rendering
+   NNS FY26 KPI Dashboard — Q2 update — data + rendering
    ============================================================ */
 const AREAS = [
   {id:'overview', tab:'Overview',           short:'Overview'},
@@ -442,97 +467,105 @@ const AREAS = [
    lede:'Strengthening digital presence and communications reach.'},
   {id:'fin',      tab:'Financial',           short:'Financial',   area:'Financial Health',
    lede:'Quarterly financial health — income, expenses, and net operating income.'},
+  {id:'town',     tab:'Distribution by Town',short:'By Town',     area:'Distribution by Town',
+   lede:'Where the food goes — pounds of fresh produce delivered by town and partner across the North Shore.'},
   {id:'ref',      tab:'KPI Framework',       short:'Reference',   area:'Reference',
    lede:'How to read the dashboard, plus the full KPI framework in one place.'},
 ];
 
 // status: good | warn | bad | idle
+// Now showing YTD as primary value; midyear pace = 50% of annual target
 const KPIS = {
   vol:[
-    {id:'V1',name:'Active volunteers',baseline:46,blabel:'46 in FY25',current:36,clabel:'36 active',target:61,tlabel:'61',unit:'',owner:'Callie',freq:'Quarterly',
-     status:'warn',pct:59,note:'Down from the FY25 baseline of 46 — recruitment is a focus area for Q2.'},
-    {id:'V2',name:'Volunteer retention (returning)',baseline:12,blabel:'12 returning',current:12,clabel:'12 returning',target:25,tlabel:'25',unit:'',owner:'Callie',freq:'Quarterly',
-     status:'warn',pct:48,note:'Holding steady at 12; reaching 25 returning volunteers is the FY26 goal.'},
-    {id:'V3',name:'Skills-based volunteers engaged',baseline:1,blabel:'1 in FY25',current:2,clabel:'2 engaged',target:5,tlabel:'5',unit:'',owner:'Callie',freq:'Quarterly',
-     status:'warn',pct:40,note:'Doubled from baseline — on the path toward 5 by year-end.'},
-    {id:'V4',name:'Volunteer type breakdown',owner:'Callie',freq:'Quarterly',status:'idle',type:'breakdown',
-     breakdown:[{l:'Individual',v:36,c:'#4a7c59'},{l:'Group',v:0,c:'#8fb339'},{l:'Corporate',v:0,c:'#e8a838'}],
-     note:'Target mix to be defined. Q1: all 36 volunteers are individuals — group & corporate channels are the growth opportunity.'},
+    {id:'V1',name:'Active volunteers',baseline:46,blabel:'46 in FY25',current:71,clabel:'71 active (YTD)',q1:36,q2:35,target:61,tlabel:'61',unit:'',owner:'Callie',freq:'Quarterly',
+     status:'good',pct:100,note:'YTD count of 71 exceeds the FY26 goal of 61 — strong volunteer recruitment in the first half.'},
+    {id:'V2',name:'Volunteer retention (returning)',baseline:12,blabel:'12 returning FY25',current:24,clabel:'24 returning (YTD)',q1:12,q2:12,target:25,tlabel:'25',unit:'',owner:'Callie',freq:'Quarterly',
+     status:'good',pct:96,note:'24 returning volunteers YTD against a goal of 25 — nearly there.'},
+    {id:'V3',name:'Skills-based volunteers engaged',baseline:1,blabel:'1 in FY25',current:2,clabel:'2 engaged (YTD)',q1:2,q2:0,target:5,tlabel:'5',unit:'',owner:'Callie',freq:'Quarterly',
+     status:'warn',pct:40,note:'2 skills-based volunteers YTD (2 in Q1, 0 in Q2). On the path toward 5 but needs a push in H2.'},
+    {id:'V4',name:'Volunteer type breakdown',owner:'Callie',freq:'Quarterly',status:'warn',type:'breakdown',
+     breakdown:[{l:'Individual',v:71,c:'#4a7c59'},{l:'Group',v:8,c:'#8fb339'},{l:'Corporate',v:71,c:'#e8a838'}],
+     note:'⚠️ Data check needed: Q2 reports 71 corporate volunteers, but V1 shows 35 total active in Q2. The corporate figure may be a data entry error — please verify with Callie.'},
   ],
   zone:[
-    {id:'Z1',name:'Pounds of fresh produce delivered (VEGOUT)',baseline:70000,blabel:'70,000 lbs FY25',current:14821,clabel:'14,821 lbs',target:90000,tlabel:'90,000 lbs',unit:'lbs',owner:'Giuliana',freq:'Quarterly',
-     status:'warn',pct:16,annual:true,note:'16% of the annual 90,000 lb goal delivered in Q1 — distribution ramps up through the growing season.'},
-    {id:'Z2',name:'New VEGOUT markets / sites in Zone 1',baseline:0,blabel:'0 in FY25',current:3,clabel:'3 new sites',target:3,tlabel:'3',unit:'',owner:'Giuliana',freq:'Quarterly',
-     status:'good',pct:100,note:'Target met — all 3 new sites established in Q1.'},
-    {id:'Z3',name:'New households offered subsidized Farm SHARE CSA',baseline:0,blabel:'0 in FY25',current:0,clabel:'0 households',target:20,tlabel:'20',unit:'',owner:'Giuliana',freq:'Quarterly',
-     status:'warn',pct:0,note:'Outreach begins as the Farm SHARE season opens later in the year.'},
-    {id:'Z4',name:'Individuals served through Food Access Programs',baseline:4000,blabel:'4,000 in FY25',target:5000,tlabel:'5,000',unit:'',owner:'Giuliana',freq:'Annually',status:'idle',annualHold:true,
-     note:'Annual metric — reported at year-end. FY25 baseline shown.'},
-    {id:'Z5',name:'Contracts completed vs. in development',owner:'Tany',freq:'Quarterly',status:'idle',type:'fraction',num:0,den:30,
-     note:'Target to be defined. Q1: 0 of 30 identified contracts complete; pipeline is in active development.'},
+    {id:'Z1',name:'Pounds of fresh produce delivered (VEGOUT)',baseline:70000,blabel:'70,000 lbs FY25',current:33526,clabel:'33,526 lbs (YTD)',q1:14936,q2:18590,target:90000,tlabel:'90,000 lbs',unit:'lbs',owner:'Giuliana',freq:'Quarterly',
+     status:'warn',pct:37,annual:true,note:'37% of the 90,000 lb goal at midyear. Distribution ramps in summer/fall — Q2 already up 24% over Q1.'},
+    {id:'Z2',name:'New VEGOUT markets / sites in Zone 1',baseline:0,blabel:'0 in FY25',current:4,clabel:'4 new sites (YTD)',q1:3,q2:1,target:3,tlabel:'3',unit:'',owner:'Giuliana',freq:'Quarterly',
+     status:'good',pct:100,note:'Target exceeded — 4 new sites against a goal of 3. Expansion goal achieved at midyear.'},
+    {id:'Z3',name:'New households offered subsidized Farm SHARE CSA',baseline:0,blabel:'0 in FY25',current:12,clabel:'12 households (YTD)',q1:0,q2:12,target:20,tlabel:'20',unit:'',owner:'Giuliana',freq:'Quarterly',
+     status:'warn',pct:60,note:'12 households enrolled as the Farm SHARE season opened in Q2. Aiming for 20 by year-end.'},
+    {id:'Z4',name:'Individuals served through Food Access Programs',baseline:5000,blabel:'5,000 in FY25',target:5000,tlabel:'5,000',unit:'',owner:'Giuliana',freq:'Annually',status:'idle',annualHold:true,
+     note:'Annual metric — reported at year-end. Need to establish tracking through partner surveys.'},
+    {id:'Z5',name:'Contracts completed vs. in development',owner:'Tany',freq:'Quarterly',status:'good',type:'fraction',num:25,den:30,
+     note:'25 of 30 contracts complete — strong progress from 0/30 in Q1 to 25/30 by end of Q2.'},
   ],
   eval:[
-    {id:'P1',name:'Farm SHARE memberships',baseline:44,blabel:'44 in FY25',current:0,clabel:'0 (pre-season)',target:65,tlabel:'65',unit:'',owner:'Giuliana',freq:'Quarterly',
-     status:'idle',pct:0,note:'Season not yet started — memberships open ahead of the summer CSA. FY25 reached 44.'},
+    {id:'P1',name:'Farm SHARE memberships',baseline:44,blabel:'44 in FY25',current:54,clabel:'54 memberships (YTD)',q1:0,q2:10,target:65,tlabel:'65',unit:'',owner:'Giuliana',freq:'Quarterly',
+     status:'good',pct:83,note:'54 active memberships (Q1: 0 pre-season, Q2: season opened with 10 new). Well on pace toward 65.'},
     {id:'P2',name:'Farm SHARE participant satisfaction',baseline:9,blabel:'9 respondents FY25',target:20,tlabel:'20 respondents',unit:'',owner:'Giuliana',freq:'Annually',status:'idle',annualHold:true,
      note:'Annual survey metric — collected at season end. Goal: 20 respondents.'},
     {id:'P3',name:'Improved food access from VEGOUT',baseline:57,blabel:'57 respondents FY25',target:100,tlabel:'100 respondents',unit:'',owner:'Giuliana',freq:'Annually',status:'idle',annualHold:true,
      note:'Annual survey metric — measures change in food access among VEGOUT participants.'},
-    {id:'P4',name:'Cost per pound distributed (VEGOUT)',baseline:2.41,blabel:'$2.41 FY25',current:2.84,clabel:'$2.84/lb',target:2.80,tlabel:'≤ $2.80',unit:'',owner:'Tany',freq:'Quarterly',
-     status:'warn',lower:true,money:true,note:'Lower is better. Q1 came in $0.04 over the $2.80 ceiling — worth watching as volume scales.'},
-    {id:'P5',name:'Produce purchased (all programs)',baseline:182283,blabel:'$182,283 FY25',current:40440,clabel:'$40,440',target:253000,tlabel:'$253,000',unit:'',money:true,owner:'Tany',freq:'Quarterly',
-     status:'warn',pct:16,annual:true,note:'16% of the annual produce budget invested in Q1, in step with seasonal purchasing.'},
+    {id:'P4',name:'Cost per pound distributed (VEGOUT)',baseline:2.41,blabel:'$2.41 FY25',current:2.51,clabel:'$2.51/lb (YTD)',q1:2.83,q2:2.25,target:2.80,tlabel:'≤ $2.80',unit:'',owner:'Tany',freq:'Quarterly',
+     status:'good',lower:true,money:true,note:'YTD cost is $2.51/lb — under the $2.80 ceiling. Q2 dropped to $2.25/lb as volume scaled. Strong cost efficiency.'},
+    {id:'P5',name:'Produce purchased (all programs)',baseline:182283,blabel:'$182,283 FY25',current:101366,clabel:'$101,366 (YTD)',q1:40440,q2:60926,target:253000,tlabel:'$253,000',unit:'',money:true,owner:'Tany',freq:'Quarterly',
+     status:'good',pct:40,annual:true,note:'40% of the annual produce budget invested at midyear. Q2 spend ($60,926) reflects seasonal ramp-up with Farm SHARE.'},
   ],
   fund:[
-    {id:'F1',name:'Total dollars raised',baseline:655266,blabel:'$655,266 FY25',current:146372,clabel:'$146,372',target:660105,tlabel:'$660,105',unit:'',money:true,owner:'Rosemary',freq:'Quarterly',
-     status:'good',pct:22,annual:true,note:'22% of the annual goal raised in Q1 — on pace against the $660,105 target.'},
+    {id:'F1',name:'Total dollars raised',baseline:655266,blabel:'$655,266 FY25',current:235111,clabel:'$235,111 (YTD)',q1:146372,q2:88739,target:660105,tlabel:'$660,105',unit:'',money:true,owner:'Rosemary',freq:'Quarterly',
+     status:'warn',pct:36,annual:true,note:'36% of the annual goal raised at midyear — slightly behind the 50% pace. Q2 ($88,739) was lower than Q1 ($146,372). Fall fundraising season is key.'},
     {id:'F2',name:'Donors by giving level',owner:'Rosemary',freq:'Quarterly',status:'good',type:'breakdown',
-     breakdown:[{l:'Small',v:34,c:'#8fb339'},{l:'Mid',v:2,c:'#4a7c59'},{l:'Large',v:9,c:'#e8a838'},{l:'Major',v:12,c:'#cf8f1f'}],
-     note:'Q1 actuals exceeded Q1 goals at the small and major levels (34 vs 10, and 12 vs 5).'},
-    {id:'F3',name:'Donor retention rate',baseline:37,blabel:'37% in FY25',current:56,clabel:'56%',target:null,tlabel:'Track trend',unit:'%',owner:'Rosemary',freq:'Quarterly',
-     status:'good',trend:true,note:'Retention climbed to 56% (30 donors) from 37% — a strong upward trend. No fixed target; tracked as a trend.'},
-    {id:'F4',name:'Recurring / monthly donors',baseline:7,blabel:'7 in FY25',current:7,clabel:'7 donors',target:8,tlabel:'8',unit:'',owner:'Rosemary',freq:'Quarterly',
-     status:'warn',pct:88,note:'Steady at 7 — one more monthly donor reaches the FY26 goal.'},
-    {id:'F5',name:'Grant success rate (awarded / applied)',baseline:54,blabel:'54% in FY25',current:54.5,clabel:'54.5%',target:50,tlabel:'≥ 50%',unit:'%',owner:'Rosemary',freq:'Quarterly',
-     status:'good',atLeast:true,note:'Above the 50% floor and holding near the FY25 rate — healthy grant pipeline.'},
+     breakdown:[{l:'Small (<$500)',v:52,c:'#8fb339'},{l:'Mid ($500–$1K)',v:6,c:'#4a7c59'},{l:'Large ($1K–$5K)',v:12,c:'#e8a838'},{l:'Major ($5K+)',v:12,c:'#cf8f1f'}],
+     note:'YTD: 82 total donors. All levels tracking ahead of targets. Q2 added 16 small, 4 mid, 3 large, 0 major.'},
+    {id:'F3',name:'Donor retention rate',baseline:37,blabel:'37% in FY25 (116 donors)',current:47.4,clabel:'47.4% (46 donors)',target:null,tlabel:'Track trend',unit:'%',owner:'Rosemary',freq:'Quarterly',
+     status:'good',trend:true,note:'Retention at 47.4% (46 donors) YTD — up from 37% in FY25. Q2 data not yet reported; YTD average used.'},
+    {id:'F4',name:'Recurring / monthly donors',baseline:7,blabel:'7 in FY25',current:7,clabel:'7 donors (YTD)',q1:7,q2:7,target:8,tlabel:'8',unit:'',owner:'Rosemary',freq:'Quarterly',
+     status:'warn',pct:88,note:'Holding steady at 7 through Q2 — one more monthly donor reaches the FY26 goal.'},
+    {id:'F5',name:'Grant success rate (awarded / applied)',baseline:54,blabel:'54% in FY25',current:54.5,clabel:'54.5% (Q1)',target:50,tlabel:'≥ 50%',unit:'%',owner:'Rosemary',freq:'Quarterly',
+     status:'good',atLeast:true,note:'Q1 rate of 54.5% exceeds the 50% floor. Q2 data not yet reported. YTD figure (32) may be a count — needs clarification.'},
   ],
   brand:[
-    {id:'B1',name:'Website visits per quarter',baseline:1885,blabel:'1,885 visits Q1 FY25',current:2161,clabel:'2,161 visits',target:2100,tlabel:'2,100 (700/mo)',unit:'',owner:'Tany',freq:'Quarterly',
-     status:'good',pct:103,sample:false,note:'Q1 FY26: 2,161 visits (Q1 FY25 baseline: 1,885). Target is 700 visits/month = ~2,100/quarter.'},
-    {id:'B2',name:'Social media followers',baseline:3690,blabel:'3,690 FY25',current:3893,clabel:'3,893',target:4000,tlabel:'4,000',unit:'',owner:'Tany',freq:'Quarterly',
-     status:'good',pct:97,sample:false,note:'Q1 FY26: 3,893 followers. Up 203 from FY25 baseline of 3,690. On pace toward 4,000 target.'},
-    {id:'B3',name:'Email open rate',baseline:22.54,blabel:'22.54% open / 2.54% CTR FY25',current:22.94,clabel:'22.94% open / 3.9% CTR',target:24,tlabel:'24% open / 3% CTR',unit:'%',owner:'Rosemary',freq:'Quarterly',
-     status:'good',pct:96,sample:false,note:'Q1 FY26: 22.94% open rate (target 24%) and 3.9% CTR — click-through already exceeds the 3% target. Open rate continues to trend upward from 22.54% baseline.'},
+    {id:'B1',name:'Website page visits (quarterly)',baseline:1885,blabel:'1,885/qtr in FY25',current:9732,clabel:'9,732 visits (YTD)',q1:4503,q2:5229,target:2100,tlabel:'2,100/qtr (700/mo)',unit:'',owner:'Tany',freq:'Quarterly',
+     status:'good',pct:100,note:'YTD visits (9,732) far exceed the target of 700/month. Q2 (5,229) up 16% over Q1 (4,503). Strong web engagement.'},
+    {id:'B2',name:'Social media followers',baseline:3690,blabel:'3,690 FY25',current:3929,clabel:'3,929 followers (YTD)',q1:3863,q2:66,target:4000,tlabel:'4,000',unit:'',owner:'Tany',freq:'Quarterly',
+     status:'good',pct:98,note:'3,929 followers — just 71 away from the 4,000 target. Q2 added 66 net new followers.'},
+    {id:'B3',name:'Email open rate / click-through rate',baseline:22.54,blabel:'22.54% open / 2.54% CTR',current:24.4,clabel:'24.4% open / 3.7% CTR (YTD)',target:24,tlabel:'24% open / 3% CTR',unit:'%',owner:'Rosemary',freq:'Quarterly',
+     status:'good',pct:100,note:'Both metrics exceed targets: 24.4% open rate (goal: 24%) and 3.7% CTR (goal: 3%). Q1 was 24.6%/4.0%.'},
   ],
 };
 
-// Financial data
+// Financial data — now includes Q1, Q2, and YTD
 const FIN = {
-  yoy:[
-    {label:'Total Income',     q25:78144,  q26:172672},
-    {label:'Total Expenses',   q25:101833, q26:116149},
-    {label:'Net Operating Income', q25:-23688, q26:56524},
-  ],
-  lines:[
-    {label:'Total Grants',         base:17175, act:114235, tgt:255500, kind:'inc'},
-    {label:'Total Donations',      base:59136, act:56033,  tgt:302500, kind:'inc'},
-    {label:'Program Fees',         base:1868,  act:2336,   tgt:10000,  kind:'inc'},
-    {label:'Payroll',              base:54808, act:53246,  tgt:282322, kind:'exp'},
-    {label:'Professional Services',base:8938,  act:10230,  tgt:39900,  kind:'exp'},
-    {label:'Administration (total)',base:70498,act:69698,  tgt:348805, kind:'exp'},
-    {label:'Food Cost – VEGOUT',   base:24634, act:42152,  tgt:218000, kind:'exp'},
-    {label:'Food Cost – Farm SHARE',base:800,  act:0,      tgt:35000,  kind:'exp'},
-    {label:'Program Expense (total)',base:30744,act:42688, tgt:287500, kind:'exp'},
-  ],
+  // YoY headline figures
+  ytdInc: 259082, ytdExp: 267165, ytdNet: -8083,
+  q1Inc: 172672, q1Exp: 116149, q1Net: 56524,
+  q2Inc: 86409,  q2Exp: 151016, q2Net: -64607,
+  tgtInc: 583000, tgtExp: 660105, tgtNet: -77105,
 };
+
+// Town distribution data
+const TOWNS = [
+  {town:'Amesbury',     zone:1, q1:58,   q2:56,   sq1:1, sq2:2, pq1:'Food is Medicine', pq2:'Our Neighbors Table; Food is Medicine'},
+  {town:'Georgetown',   zone:1, q1:0,    q2:314,  sq1:0, sq2:1, pq1:'', pq2:'Georgetown COA'},
+  {town:'Groveland',    zone:1, q1:0,    q2:870,  sq1:0, sq2:1, pq1:'', pq2:'Groveland COA'},
+  {town:'Haverhill',    zone:1, q1:5811, q2:6474, sq1:1, sq2:3, pq1:'Sacred Hearts', pq2:'Sacred Hearts; Community Action Inc.; UUCH Community Meal Program'},
+  {town:'Merrimac',     zone:1, q1:0,    q2:230,  sq1:0, sq2:1, pq1:'', pq2:'Merrimac COA'},
+  {town:'Methuen',      zone:1, q1:83,   q2:83,   sq1:1, sq2:1, pq1:'Food is Medicine', pq2:'Food is Medicine'},
+  {town:'Newbury',      zone:1, q1:4192, q2:3886, sq1:1, sq2:1, pq1:'Newbury Food Pantry', pq2:'Newbury Food Pantry'},
+  {town:'Newburyport',  zone:1, q1:749,  q2:2547, sq1:1, sq2:2, pq1:'Among Friends Meal Program', pq2:'Among Friends Meal Program; IC Breaking Bread Meal Program'},
+  {town:'Rowley',       zone:1, q1:0,    q2:0,    sq1:0, sq2:0, pq1:'', pq2:''},
+  {town:'Salem',        zone:2, q1:2396, q2:300,  sq1:1, sq2:1, pq1:'Pequot Highlands Residence', pq2:'Pequot Highlands Residence'},
+  {town:'Salisbury',    zone:1, q1:3960, q2:1917, sq1:2, sq2:2, pq1:'Pettengill House Food Pantry; Our Neighbors Table', pq2:'Pettengill House Food Pantry; Our Neighbors Table'},
+  {town:'West Newbury', zone:1, q1:115,  q2:0,    sq1:1, sq2:1, pq1:'West Newbury Food Pantry', pq2:'West Newbury Food Pantry'},
+];
 
 /* ---------- persistence ---------- */
-const LS_KEY='nns_dashboard_overrides_v1';
+const LS_KEY='nns_dashboard_overrides_v2';
 let overrides = {};
 try{ overrides = JSON.parse(localStorage.getItem(LS_KEY)||'{}'); }catch(e){ overrides={}; }
 function persist(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(overrides)); }catch(e){} }
 
-(function(){ // restore last-updated + apply overrides
+(function(){
   if(overrides.__lastUpdated){ document.getElementById('lastUpdated').value = overrides.__lastUpdated; }
   for(const area in KPIS){ KPIS[area].forEach(k=>{
     const o = overrides[k.id];
@@ -545,7 +578,6 @@ const fmt = n => n.toLocaleString('en-US');
 const money = n => (n<0?'-$':'$')+Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0});
 function statusLabel(s){return {good:'On track',warn:'Needs attention',bad:'Off track',idle:'In progress'}[s];}
 
-// recompute pct + status when a value is edited
 function applyValue(k,val){
   const num = parseFloat(String(val).replace(/[^0-9.\-]/g,''));
   if(!isNaN(num)){
@@ -554,7 +586,6 @@ function applyValue(k,val){
   } else {
     k.clabel = String(val); k.current=undefined;
   }
-  // recompute pct/status for standard target metrics
   if(k.target!=null && k.current!=null){
     if(k.lower){
       k.status = k.current<=k.target ? 'good' : (k.current<=k.target*1.1?'warn':'bad');
@@ -562,9 +593,8 @@ function applyValue(k,val){
       k.status = k.current>=k.target ? 'good' : (k.current>=k.target*0.9?'warn':'bad');
     } else {
       k.pct = Math.round(k.current/k.target*100);
-      const ref = k.annual?22:75; // annual metrics judged vs ~Q1 pace
-      k.status = k.pct>=(k.annual?20:90)?'good':(k.pct>=(k.annual?12:45)?'warn':'bad');
-      if(k.annual){ k.status = k.pct>=20?'good':(k.pct>=12?'warn':'bad'); }
+      if(k.annual){ k.status = k.pct>=40?'good':(k.pct>=25?'warn':'bad'); }
+      else { k.status = k.pct>=90?'good':(k.pct>=45?'warn':'bad'); }
     }
   }
 }
@@ -583,7 +613,7 @@ function switchTab(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='p-'+id));
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='fin') drawFinCharts();
-  // animate bars in view
+  if(id==='town') drawTownChart();
   setTimeout(animateBars,60);
 }
 
@@ -609,16 +639,15 @@ function cardHTML(k){
     const valTxt = k.clabel || ((k.money?'$':'')+fmt(k.current)+(k.unit==='%'?'%':''));
     body='<div class="kpi-value">'+valTxt+'</div>'+
       '<div class="kpi-sub">Baseline: '+k.blabel+' &middot; Target: '+k.tlabel+'</div>';
-    if(k.sample) body+='<span class="kpi-sample">Sample data</span>';
+    if(k.q1!=null&&k.q2!=null) body+='<div class="kpi-sub" style="margin-top:2px">Q1: '+(k.money?'$':'')+fmt(k.q1)+' &middot; Q2: '+(k.money?'$':'')+fmt(k.q2)+'</div>';
     if(k.trend){
       body+=barHTML(Math.min(100,Math.round(k.current)),null,k.status,k.current+'% retained',null);
     } else if(k.lower){
-      const over=k.current<=k.target;
       body+=barHTML(Math.min(120,Math.round(k.current/k.target*100)),100,k.status,'$'+k.current.toFixed(2),'ceiling $'+k.target.toFixed(2));
     } else if(k.atLeast){
       body+=barHTML(Math.min(140,Math.round(k.current/k.target*100)),Math.round(k.target/Math.max(k.current,k.target)*100),k.status,k.current+'%','floor '+k.target+'%');
     } else if(k.pct!=null){
-      body+=barHTML(k.pct,null,k.status,k.pct+'% to target',k.annual?'Annual goal':null);
+      body+=barHTML(Math.min(100,k.pct),null,k.status,k.pct+'% of target',k.annual?'Annual goal':'');
     }
   }
   return '<div class="card '+sc+'" data-id="'+k.id+'">'+
@@ -632,41 +661,36 @@ function cardHTML(k){
 }
 function barHTML(pct,targetPct,status,leftTxt,rightTxt){
   const w=Math.max(0,Math.min(100,pct));
-  const colors={good:'#8fb339',warn:'#e8a838',bad:'#c0563f',idle:'#9a9387'};
-  const color=colors[status]||'#9a9387';
-  const track=w===0
-    ? 'background:#e4ddd0;'
-    : 'background:linear-gradient(to right,'+color+' '+w+'%,#e4ddd0 '+w+'%);';
   return '<div class="bar-wrap"><div class="bar-meta"><b>'+(leftTxt||(pct+'%'))+'</b><span>'+(rightTxt||'Target')+'</span></div>'+
-    '<div class="bar-track" style="'+track+'">'+
-    (targetPct?'<div style="position:absolute;top:-2px;bottom:-2px;left:'+Math.min(100,targetPct)+'%;width:2px;background:#4a7c59;opacity:.6;border-radius:2px"></div>':'')+
+    '<div class="bar-track"><span class="bar-fill" data-w="'+w+'" style="width:'+w+'%"></span>'+
+    (targetPct?'<span class="target-line" style="left:'+Math.min(100,targetPct)+'%"></span>':'')+
     '</div></div>';
 }
 
 /* ---------- build panels ---------- */
 const mainEl=document.getElementById('main');
-// Overview
+
+// --- Overview ---
 const ovScore = [
-  {area:'Volunteers',id:'vol',color:'#8fb339',val:'36',u:'',label:'Active volunteers',tgt:'Target: 61'},
-  {area:'Zone 1 Expansion',id:'zone',color:'#4a7c59',val:'14,821',u:'lbs',label:'Produce delivered (Q1)',tgt:'Target: 90,000 lbs'},
-  {area:'Program Evaluation',id:'eval',color:'#e8a838',val:'$2.84',u:'/lb',label:'Cost per pound (VEGOUT)',tgt:'Target: ≤ $2.80'},
-  {area:'Fundraising',id:'fund',color:'#4a7c59',val:'$146,372',u:'',label:'Raised in Q1',tgt:'Target: $660,105'},
-  {area:'Branding',id:'brand',color:'#cf8f1f',val:'3,893',u:'',label:'Social followers',tgt:'Target: 4,000'},
-  {area:'Financial',id:'fin',color:'#8fb339',val:'$56,524',u:'',label:'Net operating income (Q1)',tgt:'vs. -$23,688 Q1 FY25'},
+  {area:'Volunteers',id:'vol',color:'#8fb339',val:'71',u:'',label:'Active volunteers (YTD)',tgt:'Target: 61 — exceeded!'},
+  {area:'Zone 1 Expansion',id:'zone',color:'#4a7c59',val:'33,526',u:'lbs',label:'Produce delivered (YTD)',tgt:'Target: 90,000 lbs'},
+  {area:'Program Evaluation',id:'eval',color:'#4a7c59',val:'$2.51',u:'/lb',label:'Cost per pound (YTD)',tgt:'Target: ≤ $2.80 — on track'},
+  {area:'Fundraising',id:'fund',color:'#e8a838',val:'$235,111',u:'',label:'Raised (YTD)',tgt:'Target: $660,105 (36%)'},
+  {area:'Branding',id:'brand',color:'#8fb339',val:'9,732',u:'',label:'Website visits (YTD)',tgt:'Target: 4,200/half — exceeded!'},
+  {area:'Financial',id:'fin',color:'#e8a838',val:'-$8,083',u:'',label:'Net operating income (YTD)',tgt:'FY26 target: -$77,105 (planned)'},
 ];
-const ovStatusColor=s=>({good:'#8fb339',warn:'#e8a838',bad:'#c0563f',idle:'#9a9387'}[s]);
 let ovHTML='<div class="panel active" id="p-overview">'+
   '<div class="panel-head"><div class="title-wrap">'+
     '<div class="eyebrow">FY26 at a glance</div>'+
-    '<h2>Where we stand this quarter</h2>'+
-    '<p class="lede">The headline metric from each strategic focus area for Q1 FY26. Tap any tile to open the full section.</p>'+
+    '<h2>Where we stand at midyear</h2>'+
+    '<p class="lede">The headline metric from each strategic focus area through Q2 FY26 (January–June 2026). Tap any tile to open the full section.</p>'+
   '</div></div>'+
-  '<div class="hero"><h3>In Q1 FY26 we delivered <em>14,821 lbs</em> of fresh produce, raised <em>$146,372</em>, and returned a <em>$56,524</em> net operating surplus — a strong, mission-forward start to the year.</h3>'+
+  '<div class="hero"><h3>Through Q2 FY26 we delivered <em>33,526 lbs</em> of fresh produce across <em>12 towns</em>, raised <em>$235,111</em>, and expanded to <em>4 new VEGOUT sites</em> — exceeding the Zone 1 expansion goal at midyear.</h3>'+
     '<div class="hero-stats">'+
-      '<div class="hero-stat"><div class="n">22%</div><div class="l">of annual fundraising goal, raised in Q1</div></div>'+
-      '<div class="hero-stat"><div class="n">3 / 3</div><div class="l">new Zone 1 sites opened — target met!</div></div>'+
-      '<div class="hero-stat"><div class="n">56%</div><div class="l">donor retention, up from 37%</div></div>'+
-      '<div class="hero-stat"><div class="n">+$80k</div><div class="l">net income vs. Q1 last year</div></div>'+
+      '<div class="hero-stat"><div class="n">71</div><div class="l">active volunteers — target of 61 exceeded</div></div>'+
+      '<div class="hero-stat"><div class="n">4 / 3</div><div class="l">new Zone 1 sites (target exceeded)</div></div>'+
+      '<div class="hero-stat"><div class="n">$2.51</div><div class="l">cost per pound — under $2.80 ceiling</div></div>'+
+      '<div class="hero-stat"><div class="n">47.4%</div><div class="l">donor retention, up from 37%</div></div>'+
     '</div></div>'+
   '<div class="scorecards">'+
     ovScore.map(s=>'<div class="sc" onclick="switchTab(\''+s.id+'\')">'+
@@ -678,8 +702,8 @@ let ovHTML='<div class="panel active" id="p-overview">'+
   '</div></div>';
 mainEl.insertAdjacentHTML('beforeend',ovHTML);
 
-// Focus-area panels
-AREAS.filter(a=>a.id!=='overview'&&a.id!=='fin'&&a.id!=='ref').forEach(a=>{
+// --- Focus-area panels ---
+AREAS.filter(a=>a.id!=='overview'&&a.id!=='fin'&&a.id!=='ref'&&a.id!=='town').forEach(a=>{
   const cards=KPIS[a.id].map(cardHTML).join('');
   const html='<div class="panel" id="p-'+a.id+'">'+
     '<div class="panel-head"><div class="title-wrap">'+
@@ -698,50 +722,96 @@ AREAS.filter(a=>a.id!=='overview'&&a.id!=='fin'&&a.id!=='ref').forEach(a=>{
   mainEl.insertAdjacentHTML('beforeend',html);
 });
 
-// Financial panel
-const totIncQ25=78144,totIncQ26=172672,totExpQ25=101833,totExpQ26=116149;
-function deltaPill(q25,q26,goodUp=true){
-  const d=q26-q25; const up=d>=0; const good=goodUp?up:!up;
+// --- Financial panel ---
+const F=FIN;
+function deltaPill(old,nw,goodUp){
+  const d=nw-old; const up=d>=0; const good=goodUp?up:!up;
   return '<span class="t-delta '+(good?'delta-up':'delta-down')+'">'+(up?'▲':'▼')+' '+money(Math.abs(d))+'</span>';
 }
 const finHTML='<div class="panel" id="p-fin">'+
   '<div class="panel-head"><div class="title-wrap">'+
     '<div class="eyebrow">Financial Health</div><h2>Financial</h2>'+
-    '<p class="lede">Q1 FY26 actuals compared to last year (Q1 FY25) and to the full-year FY26 budget targets.</p>'+
+    '<p class="lede">FY26 year-to-date actuals (Q1 + Q2) compared to the full-year budget targets. Quarterly breakdown included.</p>'+
   '</div></div>'+
   '<div class="kpi-trio">'+
-    '<div class="trio"><div class="t-label">Total Income · Q1 FY26</div><div class="t-val">'+money(totIncQ26)+'</div>'+deltaPill(totIncQ25,totIncQ26,true)+' vs Q1 FY25</div>'+
-    '<div class="trio"><div class="t-label">Total Expenses · Q1 FY26</div><div class="t-val">'+money(totExpQ26)+'</div>'+deltaPill(totExpQ25,totExpQ26,false)+' vs Q1 FY25</div>'+
-    '<div class="trio"><div class="t-label">Net Operating Income · Q1 FY26</div><div class="t-val" style="color:var(--green)">'+money(56524)+'</div>'+deltaPill(-23688,56524,true)+' vs Q1 FY25</div>'+
+    '<div class="trio"><div class="t-label">Total Income · YTD</div><div class="t-val">'+money(F.ytdInc)+'</div>'+
+      '<div style="font-size:12px;color:var(--ink-faint);margin-top:6px">Q1: '+money(F.q1Inc)+' &middot; Q2: '+money(F.q2Inc)+'</div></div>'+
+    '<div class="trio"><div class="t-label">Total Expenses · YTD</div><div class="t-val">'+money(F.ytdExp)+'</div>'+
+      '<div style="font-size:12px;color:var(--ink-faint);margin-top:6px">Q1: '+money(F.q1Exp)+' &middot; Q2: '+money(F.q2Exp)+'</div></div>'+
+    '<div class="trio"><div class="t-label">Net Operating Income · YTD</div><div class="t-val" style="color:var(--red)">'+money(F.ytdNet)+'</div>'+
+      '<div style="font-size:12px;color:var(--ink-faint);margin-top:6px">Q1: '+money(F.q1Net)+' &middot; Q2: '+money(F.q2Net)+'</div></div>'+
   '</div>'+
-  '<div class="fin-note"><span class="ic">🌱</span><div><b>About the FY26 net income target (−$77,105):</b> this planned deficit reflects an intentional draw on reserves to fund program growth this year. It is a strategic investment in expanding food access — not a sign of financial trouble. Q1 is currently running a healthy surplus.</div></div>'+
+  '<div class="fin-note"><span class="ic">🌱</span><div><b>Context on Q2 and the net operating deficit:</b> Q2 expenses exceeded income by $64,607, primarily due to the seasonal launch of Farm SHARE ($23,340 in food costs) and higher program spending. This was anticipated — the FY26 budget plans a -$77,105 full-year deficit as a strategic draw on reserves to fund program growth. YTD net of -$8,083 is well ahead of the budgeted pace.</div></div>'+
   '<div class="fin-grid" style="margin-top:18px">'+
-    '<div class="chart-card"><h4>Q1 FY26 vs. Q1 FY25</h4><div class="ch-sub">Year-over-year comparison of the three headline figures.</div><div class="chart-box"><canvas id="chYoY"></canvas></div></div>'+
-    '<div class="chart-card"><h4>Income mix · Q1 FY26</h4><div class="ch-sub">Where Q1 income came from.</div><div class="chart-box"><canvas id="chMix"></canvas></div></div>'+
+    '<div class="chart-card"><h4>Q1 vs. Q2 — Income, Expenses, Net</h4><div class="ch-sub">Quarter-by-quarter comparison of the three headline figures.</div><div class="chart-box"><canvas id="chYoY"></canvas></div></div>'+
+    '<div class="chart-card"><h4>Income mix · YTD</h4><div class="ch-sub">Where year-to-date income came from.</div><div class="chart-box"><canvas id="chMix"></canvas></div></div>'+
   '</div>'+
-  '<div class="chart-card"><h4>Q1 FY26 actual vs. FY26 annual target</h4><div class="ch-sub">Progress against full-year budget for key income and expense lines (Q1 is roughly one quarter of the year).</div><div class="chart-box" style="height:360px"><canvas id="chTarget"></canvas></div></div>'+
-  '<div class="chart-card"><h4>Line-item detail</h4><div class="ch-sub">Q1 FY26 P&amp;L (actual vs. budget vs. last year) plus the Q1 FY26 balance sheet summary.</div>'+
+  '<div class="chart-card"><h4>YTD actual vs. FY26 annual target</h4><div class="ch-sub">Progress against full-year budget at midyear (50% benchmark).</div><div class="chart-box" style="height:360px"><canvas id="chTarget"></canvas></div></div>'+
+  '<div class="chart-card"><h4>Line-item detail</h4><div class="ch-sub">FY26 YTD P&amp;L (actual vs. budget vs. last year) plus the balance sheet summary.</div>'+
     '<div class="fin-wrap">'+finTable()+'</div>'+
-    '<div class="hint" style="margin-top:12px;line-height:1.5">% Income/Expense shows each line as a share of Total Income (income lines) or Total Expenses (expense lines). Balance-sheet figures are from the Q1 FY26 balance sheet summary; no budget is tracked for balance-sheet lines, so those cells show &ldquo;—&rdquo;. Quarterly budget figures are drawn from the Q1 P&amp;L summary &mdash; please confirm before sharing externally.</div></div>'+
+    '<div class="hint" style="margin-top:12px;line-height:1.5">% Income/Expense shows each line as a share of Total Income (income lines) or Total Expenses (expense lines). Balance-sheet figures are from the Q1 FY26 balance sheet summary (latest available); no budget is tracked for balance-sheet lines.</div></div>'+
   '</div>';
 mainEl.insertAdjacentHTML('beforeend',finHTML);
 
-/* ---------- Reference panel: status rubric + KPI framework table ---------- */
+// --- Town distribution panel ---
+const tQ1=TOWNS.reduce((s,t)=>s+t.q1,0), tQ2=TOWNS.reduce((s,t)=>s+t.q2,0);
+const tSitesQ2=TOWNS.reduce((s,t)=>s+t.sq2,0);
+const newTowns=TOWNS.filter(t=>t.q1===0&&t.q2>0).length;
+function growthChip(q1,q2){
+  if(q1===0&&q2>0) return '<span class="growth-chip growth-new">New</span>';
+  if(q1===0&&q2===0) return '<span style="color:var(--ink-faint)">—</span>';
+  const d=Math.round((q2-q1)/q1*100);
+  return '<span class="growth-chip '+(d>=0?'growth-up':'growth-down')+'">'+(d>=0?'▲':'▼')+' '+Math.abs(d)+'%</span>';
+}
+const townHTML='<div class="panel" id="p-town">'+
+  '<div class="panel-head"><div class="title-wrap">'+
+    '<div class="eyebrow">Distribution by Town</div><h2>Where the food goes</h2>'+
+    '<p class="lede">Pounds of fresh produce distributed by town and partner across the North Shore, Q1 and Q2 FY26.</p>'+
+  '</div></div>'+
+  '<div class="town-summary">'+
+    '<div class="town-stat"><div class="ts-val">'+fmt(tQ1+tQ2)+'</div><div class="ts-label">Total lbs distributed (YTD)</div></div>'+
+    '<div class="town-stat"><div class="ts-val">'+TOWNS.length+'</div><div class="ts-label">Towns served</div></div>'+
+    '<div class="town-stat"><div class="ts-val">'+tSitesQ2+'</div><div class="ts-label">Active sites (Q2)</div></div>'+
+    '<div class="town-stat"><div class="ts-val">'+newTowns+'</div><div class="ts-label">New towns added in Q2</div></div>'+
+  '</div>'+
+  '<div class="chart-card"><h4>Pounds distributed by town</h4><div class="ch-sub">Q1 (Jan–Mar) vs. Q2 (Apr–Jun) — sorted by total volume.</div><div class="chart-box" style="height:380px"><canvas id="chTown"></canvas></div></div>'+
+  '<div class="chart-card"><h4>Town detail</h4><div class="ch-sub">Volume, sites, and partners per town. Growth shows Q1→Q2 change.</div>'+
+    '<div class="fin-wrap"><table class="town-table"><thead><tr>'+
+      '<th>Town</th><th>Zone</th><th class="num">Q1 lbs</th><th class="num">Q2 lbs</th><th class="num">YTD lbs</th><th>Growth</th><th class="num">Sites (Q2)</th><th>Partners (Q2)</th>'+
+    '</tr></thead><tbody>'+
+    TOWNS.slice().sort((a,b)=>(b.q1+b.q2)-(a.q1+a.q2)).map(t=>{
+      const isNew=t.q1===0&&t.q2>0;
+      return '<tr>'+
+        '<td class="town-name">'+t.town+(isNew?'<span class="new-tag">New Q2</span>':'')+'</td>'+
+        '<td><span class="zone-badge'+(t.zone===2?' z2-badge':'')+'">Zone '+t.zone+'</span></td>'+
+        '<td class="num">'+fmt(t.q1)+'</td><td class="num">'+fmt(t.q2)+'</td>'+
+        '<td class="num" style="font-weight:700">'+fmt(t.q1+t.q2)+'</td>'+
+        '<td>'+growthChip(t.q1,t.q2)+'</td>'+
+        '<td class="num">'+t.sq2+'</td>'+
+        '<td class="partners">'+(t.pq2||'—').replace(/;/g,'; ')+'</td></tr>';
+    }).join('')+
+    '<tr class="tot"><td>Total</td><td></td><td class="num">'+fmt(tQ1)+'</td><td class="num">'+fmt(tQ2)+'</td><td class="num">'+fmt(tQ1+tQ2)+'</td><td>'+growthChip(tQ1,tQ2)+'</td><td class="num">'+tSitesQ2+'</td><td></td></tr>'+
+    '</tbody></table></div>'+
+    '<div class="hint" style="margin-top:10px">Town-level totals ('+fmt(tQ1+tQ2)+' lbs) differ slightly from the Z1 KPI total (33,526 lbs) — the gap likely reflects sites not yet in the town breakdown or rounding.</div>'+
+  '</div></div>';
+mainEl.insertAdjacentHTML('beforeend',townHTML);
+
+// --- Reference panel ---
 const RUBRIC=[
   {k:'good',c:'#8fb339',name:'On track',
-   d:'At or ahead of the expected pace for this point in the year. <b>Quarterly</b> goals at/above ~90% of the FY26 target; <b>full-year totals</b> (pounds, dollars) with ≥20% already banked in Q1; <b>threshold</b> metrics (grant success, cost/lb) meeting or beating the goal.'},
+   d:'At or ahead of expected pace. <b>Cumulative targets</b> (lbs, dollars) at or above ~40% at midyear; <b>count targets</b> at or above ~90% of FY26 goal; <b>threshold metrics</b> (cost/lb, grant rate) meeting or beating the goal.'},
   {k:'warn',c:'#e8a838',name:'Needs attention',
-   d:'Behind pace but recoverable. Quarterly goals at <b>45–90%</b> of target; full-year totals with <b>12–20%</b> reached in Q1; or within ~10% of a threshold or cost ceiling.'},
+   d:'Behind pace but recoverable. Cumulative targets at <b>25–40%</b> at midyear; count targets at <b>45–90%</b>; or within ~10% of a threshold or cost ceiling.'},
   {k:'bad',c:'#c0563f',name:'Off track',
-   d:'Well behind pace and likely to miss without intervention. Quarterly goals <b>under 45%</b> of target; full-year totals <b>under 12%</b> in Q1; or more than ~10% past a threshold/ceiling.'},
+   d:'Well behind pace and likely to miss without intervention. Cumulative targets <b>under 25%</b> at midyear; count targets <b>under 45%</b>; or more than ~10% past a threshold/ceiling.'},
   {k:'idle',c:'#9a9387',name:'In progress / not tracking',
-   d:'No comparable Q1 result yet — <b>annual-only</b> metrics reported at year-end, <b>pre-season</b> metrics, or targets still <b>to be defined</b>.'},
+   d:'No comparable result yet — <b>annual-only</b> metrics reported at year-end, targets still <b>to be defined</b>, or tracking not yet established.'},
 ];
 function q1Display(k){
   if(k.type==='breakdown') return k.breakdown.map(b=>b.v).join(' / ');
   if(k.type==='fraction') return k.num+' of '+k.den;
-  if(k.annualHold) return 'Annual \u2014 reported year-end';
-  return k.clabel || '\u2014';
+  if(k.annualHold) return 'Annual — reported year-end';
+  return k.clabel || '—';
 }
 function fwStat(s){return '<span class="fw-stat" style="color:'+({good:'#5a7320',warn:'#cf8f1f',bad:'#c0563f',idle:'#6f685c'}[s])+'"><span class="d" style="background:'+({good:'#8fb339',warn:'#e8a838',bad:'#c0563f',idle:'#9a9387'}[s])+'"></span>'+statusLabel(s)+'</span>';}
 let fwBody='';
@@ -750,7 +820,7 @@ let fwBody='';
   fwBody+='<tr class="fw-area-row"><td colspan="7">'+a.area+'</td></tr>';
   KPIS[aid].forEach(k=>{
     fwBody+='<tr>'+
-      '<td class="fw-kpi">'+k.name+(k.sample?' <span style="color:var(--amber-deep);font-weight:600;font-size:11px">(sample)</span>':'')+'</td>'+
+      '<td class="fw-kpi">'+k.name+'</td>'+
       '<td>'+(k.blabel||'Tracking in progress')+'</td>'+
       '<td class="num">'+q1Display(k)+'</td>'+
       '<td>'+(k.tlabel||'To be defined')+'</td>'+
@@ -763,54 +833,54 @@ let fwBody='';
 const refHTML='<div class="panel" id="p-ref">'+
   '<div class="panel-head"><div class="title-wrap">'+
     '<div class="eyebrow">Reference</div><h2>How to read this dashboard</h2>'+
-    '<p class="lede">Every KPI is given a status based on its pace toward the FY26 goal. Here is what each status means, followed by the full KPI framework in one table.</p>'+
+    '<p class="lede">Every KPI is given a status based on its pace toward the FY26 goal. Here is what each status means, followed by the full KPI framework.</p>'+
   '</div></div>'+
   '<div class="rubric">'+RUBRIC.map(r=>
     '<div class="rub r-'+r.k+'"><div class="r-name"><span class="r-swatch" style="background:'+r.c+'"></span>'+r.name+'</div>'+
     '<div class="r-desc">'+r.d+'</div></div>').join('')+'</div>'+
-  '<div class="hint" style="margin:0 2px 22px">Pace benchmarks are guidelines for a first-draft view and can be tuned per metric. &ldquo;Lower is better&rdquo; applies to cost per pound; &ldquo;higher is better&rdquo; to all other targets unless noted.</div>'+
+  '<div class="hint" style="margin:0 2px 22px">Pace benchmarks are guidelines and can be tuned per metric. Midyear benchmarks use 40%/25% for cumulative and 90%/45% for count targets. &ldquo;Lower is better&rdquo; applies to cost per pound.</div>'+
   '<div class="panel-head" style="margin-bottom:14px"><div class="title-wrap">'+
     '<div class="eyebrow">All metrics</div><h2 style="font-size:26px">KPI Framework</h2>'+
-    '<p class="lede">Baseline, current Q1 FY26 result, target, owner, and status for every tracked KPI.</p></div></div>'+
+    '<p class="lede">Baseline, year-to-date result, target, owner, and status for every tracked KPI.</p></div></div>'+
   '<div class="fw-wrap"><table class="fw-table"><thead><tr>'+
-    '<th>KPI</th><th>FY25 Baseline</th><th class="num">Q1 FY26</th><th>FY26 Target</th><th>Owner</th><th>Frequency</th><th>Status</th>'+
+    '<th>KPI</th><th>FY25 Baseline</th><th class="num">YTD FY26</th><th>FY26 Target</th><th>Owner</th><th>Frequency</th><th>Status</th>'+
     '</tr></thead><tbody>'+fwBody+'</tbody></table></div>'+
   '</div>';
 mainEl.insertAdjacentHTML('beforeend',refHTML);
 
+/* ---------- financial table ---------- */
 function finTable(){
-  // P&L: Q1 FY26 actual vs Q1 budget (from Q1 P&L summary) vs last year (Q1 FY25)
-  // sub = indented child line; tot = bold total
-  const TINC=172672, TEXP=116149;
+  const TINC=259082, TEXP=267165;
+  // Q1+Q2 YTD actuals; H1 FY25 as "last year"; FY26 full-year budget
   const P=[
-    {label:'Total Grants',        act:114235, bud:92119,  ly:102812, denom:TINC},
-    {label:'Total Donations',     act:56033,  bud:54787,  ly:50291,  denom:TINC},
-    {label:'Program Fees',        act:2336,   bud:null,   ly:2102,   denom:TINC},
-    {label:'Total Income',        act:172672, bud:146906, ly:155267, denom:TINC, tot:true, inc:true},
-    {label:'Payroll Expenses',    act:53246,  bud:62760,  ly:47922,  denom:TEXP, sub:true},
-    {label:'Professional Services',act:10230, bud:null,   ly:8938,   denom:TEXP, sub:true},
-    {label:'Administration (total)',act:69698,bud:80103,  ly:62347,  denom:TEXP, tot:true},
-    {label:'Food Cost – VEGOUT',  act:42152,  bud:19500,  ly:30412,  denom:TEXP, sub:true},
-    {label:'Food Cost – Farm SHARE',act:0,    bud:14250,  ly:0,      denom:TEXP, sub:true},
-    {label:'Program Expense (total)',act:42688,bud:38075, ly:32435,  denom:TEXP, tot:true},
-    {label:'Total Expenses',      act:116149, bud:119078, ly:101833, denom:TEXP, tot:true},
-    {label:'Net Operating Income',act:56524,  bud:27829,  ly:-23688, net:true, tot:true},
+    {label:'Total Grants',        act:154845, bud:255500, ly:102812, denom:TINC},
+    {label:'Total Donations',     act:100564, bud:302500, ly:50291,  denom:TINC},
+    {label:'Program Fees',        act:3473,   bud:10000,  ly:2102,   denom:TINC},
+    {label:'Total Income',        act:259082, bud:583000, ly:155267, denom:TINC, tot:true, inc:true},
+    {label:'Payroll Expenses',    act:118213, bud:282322, ly:47922,  denom:TEXP, sub:true},
+    {label:'Professional Services',act:20029, bud:39900,  ly:9163,   denom:TEXP, sub:true},
+    {label:'Administration (total)',act:148519,bud:348805,ly:62347,  denom:TEXP, tot:true},
+    {label:'Food Cost – VEGOUT',  act:78026,  bud:218000, ly:30412,  denom:TEXP, sub:true},
+    {label:'Food Cost – Farm SHARE',act:23340,bud:35000,  ly:0,      denom:TEXP, sub:true},
+    {label:'Program Expense (total)',act:108230,bud:287500,ly:32435, denom:TEXP, tot:true},
+    {label:'Total Expenses',      act:267165, bud:660105, ly:98165,  denom:TEXP, tot:true},
+    {label:'Net Operating Income',act:-8083,  bud:-77105, ly:57102,  net:true, tot:true},
   ];
   const pct=(n,d)=>(d&&d!==0)?Math.round(n/d*100)+'%':'—';
-  const signed=(n,d,expense)=>{ // % +/- budget, colored (income over=good, expense over=bad)
+  const signed=(n,d,expense)=>{
     if(d==null||d===0) return '<td class="num">—</td>';
     const v=Math.round((n-d)/Math.abs(d)*100);
     const over=v>=0; const good = expense ? !over : over;
     return '<td class="num '+(good?'pos':'neg')+'">'+(over?'+':'')+v+'%</td>';
   };
-  const ly=(act,lyv)=>{ if(lyv==null||lyv===0) return '—'; if(lyv<0&&act>=0) return 'turned +'; return Math.round(act/lyv*100)+'%'; };
+  const ly=(act,lyv)=>{ if(lyv==null||lyv===0) return '—'; if(lyv<0&&act>=0) return 'turned +'; if(lyv>0&&act<0) return 'turned −'; return Math.round(act/lyv*100)+'%'; };
   const ie=r=>r.net?'—':pct(r.act,r.denom);
   const row=r=>{
     const cls=(r.tot?'tot ':'')+(r.net?'net ':'')+(r.sub?'indent ':'');
     return '<tr class="'+cls.trim()+'">'+
       '<td>'+r.label+'</td>'+
       '<td class="num">'+money(r.act)+'</td>'+
-      '<td class="num">'+(r.bud==null?'—':money(r.bud))+'</td>'+
+      '<td class="num">'+money(r.bud)+'</td>'+
       '<td class="num">'+pct(r.act,r.bud)+'</td>'+
       signed(r.act,r.bud,r.denom===TEXP)+
       '<td class="num">'+money(r.ly)+'</td>'+
@@ -818,8 +888,8 @@ function finTable(){
       '<td class="num">'+ie(r)+'</td>'+
     '</tr>';
   };
-
-  // Balance sheet (Q1 FY26 = Jan-Mar 2026 actual, LY = Jan-Mar 2025)
+  // Balance sheet (Q1 FY26 — latest available)
+  const TCA=469824.55, TCL=9469.54, TCA_ly=199951.54, TCL_ly=4403.38;
   const bsRow=(label,act,lyv,opt={})=>{
     const cls=(opt.tot?'tot ':'')+(opt.ratio?'ratio ':'')+(opt.sub?'indent ':'');
     const fmtv=v=>opt.ratio?(v.toFixed(1)):money(v);
@@ -829,22 +899,18 @@ function finTable(){
       '<td class="num">—</td><td class="num">—</td><td class="num">—</td>'+
       '<td class="num">'+(lyv==null?'—':fmtv(lyv))+'</td>'+
       '<td class="num">'+(lyv?Math.round(act/lyv*100)+'%':'—')+'</td>'+
-      '<td class="num">—</td>'+
-    '</tr>';
+      '<td class="num">—</td></tr>';
   };
-  const TCA=469824.55, TCL=9469.54, TCA_ly=199951.54, TCL_ly=4403.38;
-
   return '<table class="fin-table"><thead><tr>'+
-    '<th>P&amp;L</th><th class="num">Actual</th><th class="num">Budget</th><th class="num">% of Budget</th>'+
-    '<th class="num">% +/- Budget</th><th class="num">Last Year</th><th class="num">% to LY</th><th class="num">% Income/Expense</th>'+
+    '<th>P&amp;L (YTD)</th><th class="num">Actual</th><th class="num">FY26 Budget</th><th class="num">% of Budget</th>'+
+    '<th class="num">% +/- Budget</th><th class="num">H1 FY25</th><th class="num">% to LY</th><th class="num">% Inc/Exp</th>'+
     '</tr></thead><tbody>'+
     '<tr class="tot"><td colspan="8" style="border:none;padding-bottom:2px;color:var(--green)">Income</td></tr>'+
     P.slice(0,4).map(row).join('')+
     '<tr class="tot"><td colspan="8" style="border:none;padding:14px 10px 2px;color:var(--green)">Expenses</td></tr>'+
     P.slice(4,11).map(row).join('')+
     row(P[11])+
-    // ---- Balance sheet ----
-    '<tr class="bs-head"><td colspan="8" style="padding-top:16px">Balance Sheet &middot; as of Mar 31, 2026</td></tr>'+
+    '<tr class="bs-head"><td colspan="8" style="padding-top:16px">Balance Sheet &middot; as of Mar 31, 2026 (latest available)</td></tr>'+
     '<tr class="tot"><td colspan="8" style="border:none;padding-bottom:2px;color:var(--green)">Assets</td></tr>'+
     bsRow('Cash / Investments', 462436.05, 189411.54, {sub:true})+
     bsRow('Accounts Receivable', 4790.00, 10540.00, {sub:true})+
@@ -871,8 +937,8 @@ function drawFinCharts(){
     type:'bar',
     data:{labels:['Total Income','Total Expenses','Net Op. Income'],
       datasets:[
-        {label:'Q1 FY25',data:[78144,101833,-23688],backgroundColor:C.gray,borderRadius:6,maxBarThickness:46},
-        {label:'Q1 FY26',data:[172672,116149,56524],backgroundColor:C.green,borderRadius:6,maxBarThickness:46},
+        {label:'Q1 FY26',data:[F.q1Inc,F.q1Exp,F.q1Net],backgroundColor:C.fresh,borderRadius:6,maxBarThickness:40},
+        {label:'Q2 FY26',data:[F.q2Inc,F.q2Exp,F.q2Net],backgroundColor:C.green,borderRadius:6,maxBarThickness:40},
       ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},
@@ -880,23 +946,26 @@ function drawFinCharts(){
       scales:{y:{ticks:{callback:v=>'$'+(v/1000)+'k'},grid:{color:C.line}},x:{grid:{display:false}}}}
   });
 
-  const inc=FIN.lines.filter(l=>l.kind==='inc');
   charts.mix=new Chart(document.getElementById('chMix'),{
     type:'doughnut',
-    data:{labels:inc.map(l=>l.label),datasets:[{data:inc.map(l=>l.act),
+    data:{labels:['Grants','Donations','Program Fees'],datasets:[{data:[154845,100564,3473],
       backgroundColor:[C.green,C.fresh,C.amber],borderColor:'#fffdf8',borderWidth:3}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
       plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:12}},
-        tooltip:{callbacks:{label:c=>c.label+': '+money(c.raw)+' ('+Math.round(c.raw/172672*100)+'%)'}}}}
+        tooltip:{callbacks:{label:c=>c.label+': '+money(c.raw)+' ('+Math.round(c.raw/259082*100)+'%)'}}}}
   });
 
-  const keyLines=FIN.lines.filter(l=>['Total Grants','Total Donations','Payroll','Administration (total)','Food Cost – VEGOUT','Program Expense (total)'].includes(l.label));
+  const keyLines=[
+    {l:'Total Grants',act:154845,tgt:255500,k:'inc'},{l:'Total Donations',act:100564,tgt:302500,k:'inc'},
+    {l:'Payroll',act:118213,tgt:282322,k:'exp'},{l:'Administration',act:148519,tgt:348805,k:'exp'},
+    {l:'Food Cost – VEGOUT',act:78026,tgt:218000,k:'exp'},{l:'Program Expense',act:108230,tgt:287500,k:'exp'},
+  ];
   charts.tgt=new Chart(document.getElementById('chTarget'),{
     type:'bar',
-    data:{labels:keyLines.map(l=>l.label),
+    data:{labels:keyLines.map(l=>l.l),
       datasets:[
-        {label:'Q1 FY26 actual',data:keyLines.map(l=>l.act),backgroundColor:l=>C.green,
-          backgroundColor:keyLines.map(l=>l.kind==='inc'?C.fresh:C.amber),borderRadius:6,maxBarThickness:30},
+        {label:'YTD FY26 actual',data:keyLines.map(l=>l.act),
+          backgroundColor:keyLines.map(l=>l.k==='inc'?C.fresh:C.amber),borderRadius:6,maxBarThickness:30},
         {label:'FY26 annual target',data:keyLines.map(l=>l.tgt),backgroundColor:C.line,borderRadius:6,maxBarThickness:30},
       ]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
@@ -906,8 +975,31 @@ function drawFinCharts(){
   });
 }
 
+function drawTownChart(){
+  if(typeof Chart==='undefined') return;
+  if(charts.town) try{charts.town.destroy()}catch(e){}
+  const sorted=TOWNS.slice().sort((a,b)=>(b.q1+b.q2)-(a.q1+a.q2)).filter(t=>t.q1+t.q2>0);
+  charts.town=new Chart(document.getElementById('chTown'),{
+    type:'bar',
+    data:{labels:sorted.map(t=>t.town),
+      datasets:[
+        {label:'Q1 (Jan–Mar)',data:sorted.map(t=>t.q1),backgroundColor:C.fresh,borderRadius:6,maxBarThickness:26},
+        {label:'Q2 (Apr–Jun)',data:sorted.map(t=>t.q2),backgroundColor:C.green,borderRadius:6,maxBarThickness:26},
+      ]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:14}},
+        tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmt(c.raw)+' lbs'}}},
+      scales:{x:{stacked:false,ticks:{callback:v=>fmt(v)+' lbs'},grid:{color:C.line}},y:{grid:{display:false}}}}
+  });
+}
+
 /* ---------- bar animations ---------- */
 function animateBars(){
+  document.querySelectorAll('.panel.active .bar-fill').forEach(b=>{
+    const w=b.dataset.w||0;
+    b.style.transition='none'; b.style.width='0';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{b.style.transition='width 1s cubic-bezier(.22,1,.36,1)';b.style.width=w+'%';}));
+  });
   document.querySelectorAll('.panel.active .mb-fill').forEach(b=>{
     const w=b.style.width; b.style.transition='none'; b.style.width='0';
     requestAnimationFrame(()=>requestAnimationFrame(()=>{b.style.transition='width 1s cubic-bezier(.22,1,.36,1)';b.style.width=w;}));
@@ -919,13 +1011,13 @@ let editing=null;
 function findKpi(id){for(const a in KPIS){const k=KPIS[a].find(x=>x.id===id);if(k)return k;}return null;}
 function openModal(id){
   const k=findKpi(id); if(!k)return; editing=k;
-  document.getElementById('mTitle').textContent='Update: '+k.id;
+  document.getElementById('mTitle').textContent='Update: '+k.name;
   document.getElementById('mDesc').textContent=k.name;
   const valInput=document.getElementById('mValue');
   valInput.value = (k.current!=null && !isNaN(k.current)) ? k.current : '';
   document.getElementById('mNote').value = k.note||'';
   let hint='';
-  if(k.type==='breakdown'||k.type==='fraction'){ hint='This is a composite metric — enter the headline number or edit the note below.'; valInput.value=''; }
+  if(k.type==='breakdown'||k.type==='fraction'){ hint='Composite metric — enter the headline number or edit the note.'; valInput.value=''; }
   else if(k.target!=null){ hint='Target: '+k.tlabel+(k.lower?' (lower is better)':'')+'. Baseline: '+k.blabel+'.'; }
   else { hint='Tracked as a trend — no fixed target.'; }
   document.getElementById('mHint').textContent=hint;
@@ -946,7 +1038,6 @@ document.getElementById('mSave').onclick=()=>{
   closeModal();
 };
 function rerenderArea(kpiId){
-  // find area containing this kpi
   let areaId=null;
   for(const a in KPIS){ if(KPIS[a].some(x=>x.id===kpiId)) areaId=a; }
   if(!areaId)return;
@@ -955,15 +1046,11 @@ function rerenderArea(kpiId){
   grid.innerHTML=KPIS[areaId].map(cardHTML).join('');
   setTimeout(animateBars,40);
 }
-
-/* last-updated persistence */
 document.getElementById('lastUpdated').addEventListener('change',e=>{
   overrides.__lastUpdated=e.target.value; persist();
 });
-
-/* reset */
 document.getElementById('resetBtn').onclick=()=>{
-  if(confirm('Clear all manually-entered updates and restore the original Q1 FY26 data?')){
+  if(confirm('Clear all manually-entered updates and restore the original data?')){
     try{localStorage.removeItem(LS_KEY);}catch(e){}
     location.reload();
   }
@@ -971,6 +1058,7 @@ document.getElementById('resetBtn').onclick=()=>{
 
 /* initial paint */
 setTimeout(animateBars,200);
+
 </script>
 </body>
 </html>

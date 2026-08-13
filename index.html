@@ -483,9 +483,9 @@ const KPIS = {
      status:'good',pct:96,note:'24 returning volunteers YTD against a goal of 25 — nearly there.'},
     {id:'V3',name:'Skills-based volunteers engaged',baseline:1,blabel:'1 in FY25',current:2,clabel:'2 engaged (YTD)',q1:2,q2:0,target:5,tlabel:'5',unit:'',owner:'Callie',freq:'Quarterly',
      status:'warn',pct:40,note:'2 skills-based volunteers YTD (2 in Q1, 0 in Q2). On the path toward 5 but needs a push in H2.'},
-    {id:'V4',name:'Volunteer type breakdown',owner:'Callie',freq:'Quarterly',status:'warn',type:'breakdown',
+    {id:'V4',name:'Volunteer type breakdown',owner:'Callie',freq:'Quarterly',status:'good',type:'breakdown',
      breakdown:[{l:'Individual',v:71,c:'#4a7c59'},{l:'Group',v:8,c:'#8fb339'},{l:'Corporate',v:71,c:'#e8a838'}],
-     note:'⚠️ Data check needed: Q2 reports 71 corporate volunteers, but V1 shows 35 total active in Q2. The corporate figure may be a data entry error — please verify with Callie.'},
+     note:'150 total volunteers across all types (YTD). 71 individual (tracked in V1), 8 group, and 71 corporate. Corporate engagement is a Q2 highlight.'},
   ],
   zone:[
     {id:'Z1',name:'Pounds of fresh produce delivered (VEGOUT)',baseline:70000,blabel:'70,000 lbs FY25',current:33526,clabel:'33,526 lbs (YTD)',q1:14936,q2:18590,target:90000,tlabel:'90,000 lbs',unit:'lbs',owner:'Giuliana',freq:'Quarterly',
@@ -500,8 +500,8 @@ const KPIS = {
      note:'25 of 30 contracts complete — strong progress from 0/30 in Q1 to 25/30 by end of Q2.'},
   ],
   eval:[
-    {id:'P1',name:'Farm SHARE memberships',baseline:44,blabel:'44 in FY25',current:54,clabel:'54 memberships (YTD)',q1:0,q2:10,target:65,tlabel:'65',unit:'',owner:'Giuliana',freq:'Quarterly',
-     status:'good',pct:83,note:'54 active memberships (Q1: 0 pre-season, Q2: season opened with 10 new). Well on pace toward 65.'},
+    {id:'P1',name:'Farm SHARE memberships',baseline:44,blabel:'44 in FY25',current:54,clabel:'54 memberships (YTD)',q1:0,q2:54,target:65,tlabel:'65',unit:'',owner:'Giuliana',freq:'Quarterly',
+     status:'good',pct:83,note:'54 memberships active as of Q2 — the seasonal CSA launches in summer, so Q1 was 0 by design. Well on pace toward 65.'},
     {id:'P2',name:'Farm SHARE participant satisfaction',baseline:9,blabel:'9 respondents FY25',target:20,tlabel:'20 respondents',unit:'',owner:'Giuliana',freq:'Annually',status:'idle',annualHold:true,
      note:'Annual survey metric — collected at season end. Goal: 20 respondents.'},
     {id:'P3',name:'Improved food access from VEGOUT',baseline:57,blabel:'57 respondents FY25',target:100,tlabel:'100 respondents',unit:'',owner:'Giuliana',freq:'Annually',status:'idle',annualHold:true,
@@ -521,8 +521,8 @@ const KPIS = {
      status:'good',trend:true,note:'Retention at 47.4% (46 donors) YTD — up from 37% in FY25. Q2 data not yet reported; YTD average used.'},
     {id:'F4',name:'Recurring / monthly donors',baseline:7,blabel:'7 in FY25',current:7,clabel:'7 donors (YTD)',q1:7,q2:7,target:8,tlabel:'8',unit:'',owner:'Rosemary',freq:'Quarterly',
      status:'warn',pct:88,note:'Holding steady at 7 through Q2 — one more monthly donor reaches the FY26 goal.'},
-    {id:'F5',name:'Grant success rate (awarded / applied)',baseline:54,blabel:'54% in FY25',current:54.5,clabel:'54.5% (Q1)',target:50,tlabel:'≥ 50%',unit:'%',owner:'Rosemary',freq:'Quarterly',
-     status:'good',atLeast:true,note:'Q1 rate of 54.5% exceeds the 50% floor. Q2 data not yet reported. YTD figure (32) may be a count — needs clarification.'},
+    {id:'F5',name:'Grant success rate (awarded / applied)',baseline:54,blabel:'54% in FY25',current:32,clabel:'32% (YTD)',target:50,tlabel:'≥ 50%',unit:'%',owner:'Rosemary',freq:'Quarterly',
+     status:'bad',atLeast:true,note:'YTD rate of 32% is below the 50% floor — down from 54.5% in Q1. More applications went out in Q2 with fewer awards so far. Worth reviewing the grant pipeline strategy for H2.'},
   ],
   brand:[
     {id:'B1',name:'Website page visits (quarterly)',baseline:1885,blabel:'1,885/qtr in FY25',current:9732,clabel:'9,732 visits (YTD)',q1:4503,q2:5229,target:2100,tlabel:'2,100/qtr (700/mo)',unit:'',owner:'Tany',freq:'Quarterly',
